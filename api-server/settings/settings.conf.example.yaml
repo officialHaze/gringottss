@@ -1,2 +1,3 @@
+# DO NOT CHANGE env_file_name!
 env_file_name: .env
 server_port: 6230
