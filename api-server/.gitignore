@@ -3,3 +3,11 @@
 !.env.*
 tmp/
 bin/
+
+# Docker related
+docker-compose.yml
+docker-compose-*.yml
+
+settings/*.jsonc
+settings/*.yaml
+settings/*.yml
