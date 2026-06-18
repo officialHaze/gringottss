@@ -1,0 +1,15 @@
+============================== RULES ==================================
+||  ** Write a task that needs to be done.                           ||
+||     |                                                             ||  
+||     --- Mark priority at the begining:-                           ||  
+||          - 🟢 (Least priority)                                    ||  
+||          - 🟡 (Medium priority)                                   ||  
+||          - 🔴 (High priority)                                     ||  
+||          - ⚫ (Critical priority)                                 ||
+||  ** Maintain ONE line gap between each task.                      ||      
+||  ** End every task with a fullstop/period.                        ||  
+||  ** Always mark a task in-progress by adding ⌛ at the begining.  ||  
+||  ** Always mark a task complete by adding ✅ at the begining.     ||  
+=======================================================================
+
+TODOs:-

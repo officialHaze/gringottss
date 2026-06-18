@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Gringottss Browser Extension",
+  "version": "2.0.0",
+  "description": "Gringottss is a locally run credential manager for browsers. Save your credentials once and use across multiple browsers.",
+  "permissions": ["activeTab", "storage", "scripting", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gringottss-credential-manager@local",
+      "data_collection_permissions": {
+        "required": ["authenticationInfo"]
+      }
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Gringottss Browser Extension"
+  },
+  "icons": {
+    "128": "icons/icon128.png",
+    "512": "icons/icon512.png"
+  }
+}

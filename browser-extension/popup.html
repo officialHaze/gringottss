@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Online Credential Manager</title>
+    <style>
+      :root {
+        --bg-dark: #0f0f0f;
+        --bg-input: #1a1a1a;
+        --gold: #d4af37;
+        --gold-light: #f1c95a;
+        --text-main: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --border: #333333;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 300px;
+        background: var(--bg-dark);
+        color: var(--text-main);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+      }
+
+      /* Header - Gold Gradient */
+      .header {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        border-bottom: 2px solid var(--gold);
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        /* justify-content: center; */
+        gap: 12px;
+      }
+
+      .header-icon {
+        width: 32px;
+        height: 32px;
+        color: var(--gold);
+      }
+
+      .header-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 0.02em;
+      }
+
+      .header-sub {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 1px;
+      }
+
+      /* Body */
+      .body {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .section-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gold);
+        margin-bottom: 6px;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: #fff;
+        padding: 8px 12px;
+        outline: none;
+        transition: border-color 0.2s;
+        min-width: 0;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--gold);
+      }
+
+      button {
+        background: var(--gold);
+        color: #000;
+        border: none;
+        border-radius: 4px;
+        padding: 7px 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button:hover {
+        background: var(--gold-light);
+      }
+
+      .status.ok {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--gold);
+        border: 1px solid var(--gold);
+      }
+
+      .status.err {
+        background: rgba(200, 50, 50, 0.1);
+        color: #ff6b6b;
+        border: 1px solid #ff6b6b;
+      }
+
+      .url-display {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 8px;
+        font-size: 11px;
+        color: var(--text-muted);
+        font-family: monospace;
+        word-break: break-all;
+      }
+
+      .dot.active {
+        background: var(--gold);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <!-- <svg
+        class="header-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg> -->
+      <svg
+        class="header-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 500 500"
+      >
+        <defs>
+          <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F8E08E" />
+            <stop offset="50%" stop-color="#D4AF37" />
+            <stop offset="100%" stop-color="#9C6B00" />
+          </linearGradient>
+        </defs>
+
+        <!-- Outer Coin -->
+        <!-- <circle cx="156" cy="156" r="156" fill="#080808" /> -->
+
+        <!-- Coin Edge -->
+        <circle
+          cx="256"
+          cy="256"
+          r="242"
+          fill="none"
+          stroke="url(#gold)"
+          stroke-width="8"
+          stroke-dasharray="2 6"
+        />
+
+        <!-- Main Body -->
+        <circle
+          cx="256"
+          cy="256"
+          r="213"
+          fill="#151515"
+          stroke="#222"
+          stroke-width="2"
+        />
+
+        <!-- Outer Rune Markers -->
+        <g fill="url(#gold)">
+          <path d="M256 18 L264 34 L248 34 Z" />
+          <path d="M494 256 L478 264 L478 248 Z" />
+          <path d="M256 494 L248 478 L264 478 Z" />
+          <path d="M18 256 L34 248 L34 264 Z" />
+        </g>
+
+        <!-- Diagonal Studs -->
+        <g fill="url(#gold)">
+          <circle cx="90" cy="90" r="10" />
+          <circle cx="422" cy="90" r="10" />
+          <circle cx="90" cy="422" r="10" />
+          <circle cx="422" cy="422" r="10" />
+        </g>
+
+        <!-- Vault Wheel -->
+        <g fill="url(#gold)">
+          <rect x="245" y="96" width="22" height="320" rx="11" />
+
+          <rect x="96" y="245" width="320" height="22" rx="11" />
+
+          <rect
+            x="245"
+            y="96"
+            width="22"
+            height="320"
+            rx="11"
+            transform="rotate(45 256 256)"
+          />
+
+          <rect
+            x="245"
+            y="96"
+            width="22"
+            height="320"
+            rx="11"
+            transform="rotate(-45 256 256)"
+          />
+        </g>
+
+        <!-- Forged Ring -->
+        <circle
+          cx="256"
+          cy="256"
+          r="165"
+          fill="none"
+          stroke="#7A5600"
+          stroke-width="4"
+          stroke-dasharray="3 8"
+        />
+
+        <!-- Engraving Ring -->
+        <circle
+          cx="256"
+          cy="256"
+          r="115"
+          fill="none"
+          stroke="#7A5600"
+          stroke-width="2"
+          opacity="0.5"
+        />
+
+        <!-- Rivets -->
+        <g fill="url(#gold)">
+          <circle cx="256" cy="141" r="8" />
+          <circle cx="371" cy="256" r="8" />
+          <circle cx="256" cy="371" r="8" />
+          <circle cx="141" cy="256" r="8" />
+        </g>
+
+        <!-- Vault Core -->
+        <circle
+          cx="256"
+          cy="256"
+          r="86"
+          fill="#101010"
+          stroke="url(#gold)"
+          stroke-width="8"
+        />
+
+        <!-- Keyhole -->
+        <circle cx="256" cy="225" r="16" fill="url(#gold)" />
+
+        <path
+          d="
+      M242 245
+      H270
+      V292
+      Q270 318 256 330
+      Q242 318 242 292
+      Z"
+          fill="url(#gold)"
+        />
+
+        <circle cx="256" cy="255" r="6" fill="#111" />
+
+        <!-- Magic Sparks -->
+        <g fill="url(#gold)" opacity="0.9">
+          <path
+            d="M145 145 L149 155 L159 159 L149 163 L145 173 L141 163 L131 159 L141 155 Z"
+          />
+
+          <path
+            d="M367 145 L371 155 L381 159 L371 163 L367 173 L363 163 L353 159 L363 155 Z"
+          />
+
+          <path
+            d="M145 367 L149 377 L159 381 L149 385 L145 395 L141 385 L131 381 L141 377 Z"
+          />
+
+          <path
+            d="M367 367 L371 377 L381 381 L371 385 L367 395 L363 385 L353 381 L363 377 Z"
+          />
+        </g>
+      </svg>
+      <div>
+        <div class="header-title">Gringottss</div>
+        <div class="header-sub">Credential Manager</div>
+      </div>
+    </div>
+
+    <div class="body">
+      <!-- API Base URL -->
+      <div>
+        <div class="section-label">API Base URL</div>
+        <div class="input-row">
+          <input
+            type="text"
+            id="baseUrl"
+            placeholder="https://your-api.example.com"
+          />
+          <button id="saveBtn">Save</button>
+        </div>
+        <div class="env-notice" id="envNotice">
+          Loaded from .env in the extension folder — remove it to set API
+          BaseURL here instead.
+        </div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Current Page -->
+      <div>
+        <div class="section-label">Current Page</div>
+        <div class="url-display" id="currentUrl">—</div>
+        <div class="cred-count" style="margin-top: 8px">
+          <span class="dot" id="credDot"></span>
+          <span id="credStatus">Checking...</span>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Footer -->
+      <div class="info-row">
+        <span>Gringottss Browser Extension</span>
+        <span class="badge">v2.0.0</span>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
