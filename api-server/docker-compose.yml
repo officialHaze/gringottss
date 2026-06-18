@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gringottss-api-v1.0
+    container_name: gringottss-api
     ports:
       - 6230:6230 # Should be updated if default port is changed in settings file
     volumes:

@@ -97,6 +97,7 @@ async function fetchCredentials(url) {
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
+    console.log(json);
     return { data: json.data || null };
   } catch (e) {
     console.error("[Gringottss] GET credentials failed:", e);

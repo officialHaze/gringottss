@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/officialhaze/gringottss/api-server/api/REST/server"
 	"github.com/officialhaze/gringottss/api-server/logger"
@@ -43,23 +44,66 @@ func init() {
 }
 
 func main() {
+	args := os.Args[1:]
+
+	if len(args) <= 0 {
+		logger.ERROR().Println(`
+			Missing Arguments (need either of the 2):
+				1. start_server - Starts the Gringottss API server.
+				2. build_db - Builds the DB. Recommended to run once before running the program for first time.
+		`)
+		os.Exit(1)
+	}
+
+	arg := args[0]
+	switch strings.ToLower(strings.TrimSpace(arg)) {
+	case "start_server":
+		// start the server
+		startServer()
+	case "build_db":
+		// build the DB
+		buildDB()
+	}
+}
+
+func buildDB() {
 	// Initialize the client and open DB
 	client, err := sqliteclient.Init("sqlite", "data/gringottss.db", 1).OpenDB()
 	if err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)
+		return
 	}
 
 	// Run migrations
 	if err := client.RunMigrations(); err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)
+		return
+	}
+}
+
+func startServer() {
+	// Initialize the client and open DB
+	client, err := sqliteclient.Init("sqlite", "data/gringottss.db", 1).OpenDB()
+	if err != nil {
+		logger.ERROR().Println(err.Error())
+		os.Exit(1)
+		return
+	}
+
+	// Run migrations
+	if err := client.RunMigrations(); err != nil {
+		logger.ERROR().Println(err.Error())
+		os.Exit(1)
+		return
 	}
 
 	// Load sqlc queries for global use
 	if err := client.LoadQueries(); err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)
+		return
 	}
 
 	// Start the server

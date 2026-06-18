@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Gringottss Browser Extension",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Gringottss is a locally run credential manager for browsers. Save your credentials once and use across multiple browsers.",
   "permissions": ["activeTab", "storage", "scripting", "tabs"],
   "host_permissions": ["<all_urls>"],
   "background": {
+    "service_worker": "background.js",
     "scripts": ["background.js"]
   },
   "browser_specific_settings": {
