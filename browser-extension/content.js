@@ -195,6 +195,14 @@
   }
 
   function processInput(input) {
+    // ─── ID Presence Guard ───────────────────────────────────────────────────
+    // If the input field does not have an ID attribute, abort immediately.
+    if (
+      (!input.id || input.id.trim() === "") &&
+      (!input.name || input.name.trim() === "")
+    )
+      return;
+
     if (processedFields.has(input)) return;
     processedFields.add(input);
 
@@ -206,7 +214,7 @@
     );
 
     ensurePositionedParent(input);
-    injectOcmWidget(input);
+    injectGringottssWidget(input);
   }
 
   function ensurePositionedParent(input) {
@@ -261,7 +269,7 @@
   }
 
   // ─── Core Widget Injection (Absolute Boundary Position Lock) ───────────────
-  function injectOcmWidget(input) {
+  function injectGringottssWidget(input) {
     const parent = input.parentElement;
     if (!parent) return;
 
@@ -631,21 +639,26 @@
 
   function findMatchingCredential(input) {
     if (!pageCredentials.length) return null;
+
     const id = (input.id || "").toLowerCase().trim();
     const name = (input.name || "").toLowerCase().trim();
 
     return (
       pageCredentials.find((cred) => {
-        if (
-          cred.FormInputID?.Valid &&
-          id === cred.FormInputID.String.toLowerCase()
-        )
+        // 1. Direct string match for FormInputID
+        if (cred.FormInputID && id === cred.FormInputID.toLowerCase().trim()) {
           return true;
+        }
+
+        // 2. Object property string match for FormInputName
         if (
           cred.FormInputName?.Valid &&
-          name === cred.FormInputName.String.toLowerCase()
-        )
+          cred.FormInputName.String &&
+          name === cred.FormInputName.String.toLowerCase().trim()
+        ) {
           return true;
+        }
+
         return false;
       }) || null
     );
