@@ -1,0 +1,27 @@
+# Use this docker compose file to run the server in background
+# without worrying about OS dependency.
+name: Gringottss API Server
+services:
+  gringottss-api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gringottss-api-v1.0
+    ports:
+      - 6230:6230 # Should be updated if default port is changed in settings file
+    volumes:
+      - ./.env:/gringottss/.env:ro
+      - ./settings/settings.conf.yaml:/gringottss/settings/settings.conf.yaml:ro
+      - logs:/var/log
+      - ./data/gringottss.db:/gringottss/data/gringottss.db
+    networks:
+      - gringottss-network
+    restart: unless-stopped
+
+networks:
+  gringottss-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local

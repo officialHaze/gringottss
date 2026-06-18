@@ -5,9 +5,14 @@ tmp/
 bin/
 
 # Docker related
-docker-compose.yml
 docker-compose-*.yml
 
 settings/*.jsonc
 settings/*.yaml
 settings/*.yml
+
+!settings/*.example.jsonc
+!settings/*.example.yaml
+!settings/*.example.yml
+
+scripts/
