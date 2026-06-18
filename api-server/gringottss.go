@@ -44,7 +44,7 @@ func init() {
 
 func main() {
 	// Initialize the client and open DB
-	client, err := sqliteclient.Init("sqlite", "gringottss.db", 1).OpenDB()
+	client, err := sqliteclient.Init("sqlite", "data/gringottss.db", 1).OpenDB()
 	if err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)

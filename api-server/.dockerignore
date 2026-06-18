@@ -1,0 +1,11 @@
+# Git
+.git/
+.gitignore
+
+# Docker files iteself
+Dockerfile
+docker-compose.yml
+docker-compose-*.yml
+
+# Secrets
+.env
