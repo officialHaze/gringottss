@@ -102,10 +102,11 @@ The decrypted value is never stored back to the database.
 
 ## How It Works
 
-1. Start the Gringottss API Server. [API Server README](./api-server/README.md)
-2. Install the Gringottss Browser Extension. [Browser Extension README](./browser-extension/README.md)
-3. Configure the extension to communicate with the locally running API server as described in the extension documentation. [Browser Extension README](./browser-extension/README.md)
-4. Browse normally.
+1. Download the latest release.
+2. Start the Gringottss API Server. [API Server README](./api-server/README.md)
+3. Install the Gringottss Browser Extension. [Browser Extension README](./browser-extension/README.md)
+4. Configure the extension to communicate with the locally running API server as described in the extension documentation. [Browser Extension README](./browser-extension/README.md)
+5. Browse normally.
 
 Whenever a supported webpage contains credential input fields, Gringottss injects its widget directly into the form.
 
@@ -123,10 +124,10 @@ The widget allows users to:
 
 Gringottss supports both Firefox and Chromium-based browsers, including:
 
-- Google Chrome (Tested)
-- Mozilla Firefox (Tested)
-- Microsoft Edge (Untested)
-- Brave Browser (Untested)
+- Google Chrome (✅ Tested)
+- Mozilla Firefox (✅ Tested)
+- Microsoft Edge (⌛ Untested)
+- Brave Browser (⌛ Untested)
 
 The installation process differs slightly between Firefox and Chromium-based browsers and is documented in the browser extension README.
 
@@ -168,3 +169,58 @@ Because the database resides entirely on your machine:
 - No third-party services are required for storage or synchronization.
 
 Gringottss keeps persistence simple: one application, one database, complete ownership.
+
+---
+
+## Contributing
+
+Contributions are welcome and appreciated.
+
+Whether you're fixing bugs, improving documentation, adding features, or suggesting improvements, we'd love your help in making Gringottss better.
+
+### Getting Started
+
+1. Fork the repository.
+2. Clone your fork locally.
+
+```bash
+git clone <your-fork-url>
+```
+
+3. Create a new branch from `main`.
+
+```bash
+git checkout main
+git pull
+git checkout -b feature/my-feature
+```
+
+4. Make your changes and commit them.
+
+```bash
+git add .
+git commit -m "feat: add awesome feature"
+```
+
+5. Push your branch to your fork.
+
+```bash
+git push origin feature/my-feature
+```
+
+6. Open a Pull Request against the `main` branch.
+
+### Pull Request Process
+
+- Ensure your changes are properly tested.
+- Keep pull requests focused and reasonably scoped.
+- Provide a clear description of the changes.
+- Be responsive to review feedback.
+
+Once your Pull Request has been reviewed and approved, it will be merged into the project.
+
+### Reporting Issues
+
+If you discover a bug or have a feature request, please open an issue and provide as much relevant information as possible.
+
+Every contribution, no matter how small, helps improve Gringottss.
