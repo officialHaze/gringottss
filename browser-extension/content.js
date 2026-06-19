@@ -195,15 +195,16 @@
   }
 
   function processInput(input) {
-    // ─── ID Presence Guard ───────────────────────────────────────────────────
-    // If the input field does not have an ID attribute, abort immediately.
-    if (
-      (!input.id || input.id.trim() === "") &&
-      (!input.name || input.name.trim() === "")
-    )
-      return;
+    // // ─── ID Presence Guard ───────────────────────────────────────────────────
+    // // If the input field does not have an ID attribute, abort immediately.
+    // if (
+    //   (!input.id || input.id.trim() === "") &&
+    //   (!input.name || input.name.trim() === "")
+    // )
+    //   return;
 
     if (processedFields.has(input)) return;
+
     processedFields.add(input);
 
     input.addEventListener("input", () =>
@@ -628,7 +629,8 @@
         formInputId: input.id || "",
         formInputType: input.type || "text",
         formInputName: input.name || "",
-        formInputVal: val
+        formInputVal: val,
+        formInputXPath: getFullXPath(input)
       }
     });
 
@@ -645,18 +647,27 @@
 
     return (
       pageCredentials.find((cred) => {
-        // 1. Direct string match for FormInputID
+        // 1. Map by Input ID
         if (cred.FormInputID && id === cred.FormInputID.toLowerCase().trim()) {
           return true;
         }
 
-        // 2. Object property string match for FormInputName
+        // 2. Map by Input Name
         if (
           cred.FormInputName?.Valid &&
           cred.FormInputName.String &&
+          name &&
           name === cred.FormInputName.String.toLowerCase().trim()
         ) {
           return true;
+        }
+
+        // 3. Map by Full XPath
+        if (cred.FormInputXPath && cred.FormInputXPath.trim() !== "") {
+          const resolvedElement = getElementByXPath(cred.FormInputXPath);
+          if (resolvedElement === input) {
+            return true;
+          }
         }
 
         return false;
@@ -826,3 +837,39 @@
   // ─── Execution ────────────────────────────────────────────────────────────
   init();
 })();
+
+// ─── XPath Related Helpers ────────────────────────────────────────────────
+function getFullXPath(element) {
+  if (element.tagName.toLowerCase() === "html") return "/html[1]";
+  if (element === document.body) return "/html[1]/body[1]";
+
+  let ix = 0;
+  const siblings = element.parentNode ? element.parentNode.childNodes : [];
+  for (let i = 0; i < siblings.length; i++) {
+    const sibling = siblings[i];
+    if (sibling === element) {
+      return `${getFullXPath(element.parentNode)}/${element.tagName.toLowerCase()}[${ix + 1}]`;
+    }
+    if (
+      sibling.nodeType === Node.ELEMENT_NODE &&
+      sibling.tagName === element.tagName
+    ) {
+      ix++;
+    }
+  }
+  return "";
+}
+
+function getElementByXPath(xpath) {
+  try {
+    return document.evaluate(
+      xpath,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null
+    ).singleNodeValue;
+  } catch (e) {
+    return null;
+  }
+}

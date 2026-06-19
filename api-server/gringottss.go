@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/officialhaze/gringottss/api-server/api/REST/server"
@@ -66,38 +67,28 @@ func main() {
 	}
 }
 
-func buildDB() {
+func buildDB() *sqliteclient.Client {
 	// Initialize the client and open DB
-	client, err := sqliteclient.Init("sqlite", "data/gringottss.db", 1).OpenDB()
+	db := path.Join("data", os.Getenv("DB_NAME"))
+	client, err := sqliteclient.Init("sqlite", db, 1).OpenDB()
 	if err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)
-		return
+		return nil
 	}
 
 	// Run migrations
 	if err := client.RunMigrations(); err != nil {
 		logger.ERROR().Println(err.Error())
 		os.Exit(1)
-		return
+		return nil
 	}
+
+	return client
 }
 
 func startServer() {
-	// Initialize the client and open DB
-	client, err := sqliteclient.Init("sqlite", "data/gringottss.db", 1).OpenDB()
-	if err != nil {
-		logger.ERROR().Println(err.Error())
-		os.Exit(1)
-		return
-	}
-
-	// Run migrations
-	if err := client.RunMigrations(); err != nil {
-		logger.ERROR().Println(err.Error())
-		os.Exit(1)
-		return
-	}
+	client := buildDB()
 
 	// Load sqlc queries for global use
 	if err := client.LoadQueries(); err != nil {

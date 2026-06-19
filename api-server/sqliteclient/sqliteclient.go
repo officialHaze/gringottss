@@ -32,7 +32,8 @@ func Init(drivername, dbname string, maxopenconns int8) *Client {
 
 func (c *Client) OpenDB() (*Client, error) {
 	logger.INFO().Println("Opening DB....")
-	db, err := sql.Open(c.DriverName, c.DBName)
+	query := fmt.Sprintf("file:%s?_pragma=foreign_keys(1)", c.DBName)
+	db, err := sql.Open(c.DriverName, query)
 	if err != nil {
 		return nil, err
 	}
