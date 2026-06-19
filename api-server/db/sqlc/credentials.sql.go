@@ -11,23 +11,24 @@ import (
 )
 
 const addCredential = `-- name: AddCredential :one
-INSERT INTO credentials (id, url, form_input_id, form_input_name, form_input_type, form_input_val)
-VALUES (?1, ?2, ?3, ?4, ?5, ?6)
-ON CONFLICT (url, form_input_id)
+INSERT INTO credentials (id, url, form_input_id, form_input_name, form_input_xpath, form_input_type, form_input_val)
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+ON CONFLICT (url, form_input_id, form_input_xpath)
 DO UPDATE SET
   form_input_name = excluded.form_input_name,
   form_input_type = excluded.form_input_type,
   form_input_val = excluded.form_input_val
-RETURNING id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at
+RETURNING id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at, form_input_xpath
 `
 
 type AddCredentialParams struct {
-	ID            string
-	Url           string
-	FormInputID   string
-	FormInputName sql.NullString
-	FormInputType string
-	FormInputVal  string
+	ID             string
+	Url            string
+	FormInputID    string
+	FormInputName  sql.NullString
+	FormInputXpath string
+	FormInputType  string
+	FormInputVal   string
 }
 
 func (q *Queries) AddCredential(ctx context.Context, arg AddCredentialParams) (Credential, error) {
@@ -36,6 +37,7 @@ func (q *Queries) AddCredential(ctx context.Context, arg AddCredentialParams) (C
 		arg.Url,
 		arg.FormInputID,
 		arg.FormInputName,
+		arg.FormInputXpath,
 		arg.FormInputType,
 		arg.FormInputVal,
 	)
@@ -49,6 +51,7 @@ func (q *Queries) AddCredential(ctx context.Context, arg AddCredentialParams) (C
 		&i.FormInputVal,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.FormInputXpath,
 	)
 	return i, err
 }
@@ -69,8 +72,9 @@ func (q *Queries) DeleteCredentials(ctx context.Context, arg DeleteCredentialsPa
 }
 
 const getCredentials = `-- name: GetCredentials :many
-SELECT id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at FROM credentials
+SELECT id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at, form_input_xpath FROM credentials
 WHERE url = ?1 OR id = ?2
+ORDER BY url ASC, updated_at DESC, id ASC
 `
 
 type GetCredentialsParams struct {
@@ -96,6 +100,7 @@ func (q *Queries) GetCredentials(ctx context.Context, arg GetCredentialsParams) 
 			&i.FormInputVal,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.FormInputXpath,
 		); err != nil {
 			return nil, err
 		}
@@ -115,24 +120,27 @@ UPDATE credentials
 SET
   form_input_id = ?1,
   form_input_name = ?2,
-  form_input_type = ?3,
-  form_input_val = ?4
-WHERE url = ?5
-RETURNING id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at
+  form_input_xpath = ?3,
+  form_input_type = ?4,
+  form_input_val = ?5
+WHERE url = ?6
+RETURNING id, url, form_input_id, form_input_name, form_input_type, form_input_val, created_at, updated_at, form_input_xpath
 `
 
 type UpdateCredentialParams struct {
-	FormInputID   string
-	FormInputName sql.NullString
-	FormInputType string
-	FormInputVal  string
-	Url           string
+	FormInputID    string
+	FormInputName  sql.NullString
+	FormInputXpath string
+	FormInputType  string
+	FormInputVal   string
+	Url            string
 }
 
 func (q *Queries) UpdateCredential(ctx context.Context, arg UpdateCredentialParams) (Credential, error) {
 	row := q.db.QueryRowContext(ctx, updateCredential,
 		arg.FormInputID,
 		arg.FormInputName,
+		arg.FormInputXpath,
 		arg.FormInputType,
 		arg.FormInputVal,
 		arg.Url,
@@ -147,6 +155,7 @@ func (q *Queries) UpdateCredential(ctx context.Context, arg UpdateCredentialPara
 		&i.FormInputVal,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.FormInputXpath,
 	)
 	return i, err
 }

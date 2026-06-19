@@ -18,11 +18,12 @@ import (
 )
 
 type CredentialUpsertPayload struct {
-	URL           string `json:"url"`
-	FormInputID   string `json:"formInputId"`
-	FormInputType string `json:"formInputType"`
-	FormInputName string `json:"formInputName"`
-	FormInputVal  string `json:"formInputVal"`
+	URL            string `json:"url"`
+	FormInputID    string `json:"formInputId"`
+	FormInputType  string `json:"formInputType"`
+	FormInputName  string `json:"formInputName"`
+	FormInputXPath string `json:"formInputXPath"`
+	FormInputVal   string `json:"formInputVal"`
 }
 
 // Handle adding credential
@@ -58,16 +59,21 @@ func HandleCredentialAdd(c *gin.Context) {
 	}
 
 	// Now add the credential
+	formInputName := &sql.NullString{
+		String: payload.FormInputName,
+		Valid:  true,
+	}
+	if payload.FormInputName == "" {
+		formInputName.Valid = false
+	}
 	params := db.AddCredentialParams{
-		ID:          uuid.NewString(),
-		Url:         payload.URL,
-		FormInputID: payload.FormInputID,
-		FormInputName: sql.NullString{
-			String: payload.FormInputName,
-			Valid:  true,
-		},
-		FormInputType: payload.FormInputType,
-		FormInputVal:  payload.FormInputVal,
+		ID:             uuid.NewString(),
+		Url:            payload.URL,
+		FormInputID:    payload.FormInputID,
+		FormInputName:  *formInputName,
+		FormInputXpath: payload.FormInputXPath,
+		FormInputType:  payload.FormInputType,
+		FormInputVal:   payload.FormInputVal,
 	}
 
 	// check if credential is a password, then hash else skip

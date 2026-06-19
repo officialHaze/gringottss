@@ -9,14 +9,15 @@ import (
 )
 
 type Credential struct {
-	ID            string
-	Url           string
-	FormInputID   string
-	FormInputName sql.NullString
-	FormInputType string
-	FormInputVal  string
-	CreatedAt     string
-	UpdatedAt     string
+	ID             string
+	Url            string
+	FormInputID    string
+	FormInputName  sql.NullString
+	FormInputType  string
+	FormInputVal   string
+	CreatedAt      string
+	UpdatedAt      string
+	FormInputXpath string
 }
 
 type Url struct {
