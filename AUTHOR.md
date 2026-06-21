@@ -6,7 +6,7 @@ My name is **Moinak Dey**.
 
 I'm from Earth. 🌍
 
-At least that's what my documentation says.
+At least that's what this documentation says.
 
 Since you've made it all the way to the `AUTHOR.md`, I suppose you deserve to know a little about the human responsible for this repository.
 
@@ -38,25 +38,27 @@ Several hours later, I have a new project, three new bugs, and an unhealthy emot
 
 ---
 
-## Things I Like
+## Things I don't Like
 
-I like computers.
+I don't like computers.
 
-I like hardware.
+I don't like hardware.
 
-I like software.
+I don't like software.
 
-I like taking things apart to understand how they work.
+I don't like taking things apart to understand how they work.
 
-I also like putting them back together.
+I also don't like putting them back together.
 
-Successfully putting them back together is optional.
+So, Successfully putting them back together is always optional.
+
+Yet, here we are!
 
 I've always been fascinated by the idea that a bunch of carefully arranged text files can somehow become a product, a tool, a business, or occasionally a production outage.
 
 Computers are weird.
 
-I love them.
+I confess - I have a love/hate relationship with them.
 
 ---
 
@@ -65,7 +67,7 @@ I love them.
 Most of my projects begin with one of the following thoughts:
 
 - "This should exist."
-- "This exists, but I don't like it."
+- "This exists, but I don't want to pay for it."
 - "I wonder if I can build it myself."
 - "How hard could it possibly be?"
 
@@ -85,11 +87,11 @@ Mild irritation is the father.
 
 When I'm not programming, I'm probably:
 
-- Riding somewhere with no particular destination in mind 🏍️
-- Playing games 🎮
-- Replaying Assassin's Creed for the hundredth time because apparently nostalgia is a feature
-- Making hip-hop beats 🎤
-- Thinking about a project I promised myself I wouldn't start
+- Riding somewhere with no particular destination in mind. 🛵
+- Playing games. 🎮
+- Replaying Assassin's Creed for the hundredth time because apparently nostalgia is a feature.
+- Making hip-hop music. Yes! Your read that right. Connect with me and I can share you my catalogue. 🎤 😉
+- Thinking about a project I promised myself I wouldn't start.
 
 I am convinced that "one more feature" and "one more game" are fundamentally the same sentence.
 
@@ -136,7 +138,7 @@ Feel free to reach out.
 
 I'm not much of a social media person.
 
-Most of my online activity consists of pushing commits, reading documentation, having counselling session with an AI chatbot and searching for errors that somebody solved in 2014.
+Most of my online activity consists of pushing commits, reading documentation, having counselling session with an AI chatbot, getting depressed loosing the 10th Valorant ranked match, curing it by watching "The Office (US)" and searching for errors that somebody solved in 2014.
 
 ---
 

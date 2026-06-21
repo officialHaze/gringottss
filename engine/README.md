@@ -1,19 +1,19 @@
-# Gringottss API Server
+# Gringottss Engine
 
-The **Gringottss API Server** is the backbone of the Gringottss ecosystem.
+The **Gringottss Engine** is the backbone of the Gringottss ecosystem.
 
-It acts as the bridge between the browser extension and the local vault database, handling credential storage, retrieval, encryption, decryption and all other vault operations.
+It acts as the bridge between all other components and the local vault database, handling credential storage, retrieval, encryption, decryption and all other vault operations by exposing its API via REST server.
 
-The browser extension communicates exclusively with this server, which in turn manages the local SQLite database.
+The browser extension communicates exclusively with the engine, which in turn manages the local SQLite database.
 
 ---
 
 ## Prerequisites
 
-Before starting the API server, ensure the following dependencies are installed:
+Before starting the Engine, ensure the following dependencies are installed:
 
 - Go **1.25 or newer**
-- Docker (recommended for running the server in the background)
+- Docker (recommended for running the engine in the background)
 
 Docker is recommended because it provides a consistent runtime environment regardless of the underlying operating system or architecture.
 
@@ -61,7 +61,7 @@ DO NOT CHANGE
 
 ## Running the Server
 
-To start the API server directly:
+To start the Engine directly:
 
 ```bash
 go run gringottss.go start_server
@@ -76,13 +76,13 @@ This command will:
 ```
 
 - Execute all required database migrations.
-- Start the API server.
+- Start the Engine.
 
 ---
 
 ## Running with Docker (Recommended)
 
-Running through Docker allows the API server to operate in the background and automatically restart when configured.
+Running through Docker allows the Engine to operate in the background and automatically restart when configured.
 
 ### Step 1: Build the Binary
 
@@ -129,7 +129,7 @@ This command will:
 
 A ready-to-use Docker Compose file is included with the project.
 
-Start the server:
+Start the engine:
 
 ```bash
 docker compose up -d
@@ -139,7 +139,7 @@ This command will:
 
 - Build the Docker image
 - Create the container
-- Start the API server in the background
+- Start the Engine in the background
 
 ---
 
@@ -162,15 +162,43 @@ All vault data is stored in:
 ./data/gringottss.db
 ```
 
-This SQLite database can be copied between Gringottss releases to retain credentials, settings, and stored vault data.
+This SQLite database contains your credentials, settings, and other vault-related data.
 
-To migrate to a newer release:
+### Upgrading to a New Release
 
-1. Stop the current server.
+To continue using your existing vault in a newer Gringottss release:
+
+1. Stop the currently running server.
 2. Copy `gringottss.db` into the new release's `./data/` directory.
 3. Start the new version.
 
 No export or import process is required.
+
+---
+
+### Migrating Data from Another Machine
+
+Gringottss also supports migrating data from an existing database on another machine.
+
+1. Copy the database that you wish to migrate into the `./migrate/` directory located in the project root.
+
+2. Run:
+
+```bash
+go run gringottss.go migrate <OLD_DB_NAME>
+```
+
+Example:
+
+```bash
+go run gringottss.go migrate old-gringottss.db
+```
+
+3. Wait for the migration process to complete.
+
+Once finished, all supported credentials and vault data will be migrated into the current Gringottss database while preserving your existing records.
+
+No manual exports, imports, or data conversion steps are required.
 
 ---
 
@@ -190,9 +218,9 @@ to suit your deployment requirements.
 
 ---
 
-## Accessing the API Server
+## Accessing the Engine
 
-Once the server is running, it can be accessed locally at:
+Once the engine is running, it can be accessed locally at:
 
 ```text
 http://localhost:6230

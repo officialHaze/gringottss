@@ -44,6 +44,23 @@ func (q *Queries) DeleteURL(ctx context.Context, url string) error {
 	return err
 }
 
+const getURL = `-- name: GetURL :one
+SELECT id, url, created_at, updated_at FROM urls
+WHERE url = ?1
+`
+
+func (q *Queries) GetURL(ctx context.Context, url string) (Url, error) {
+	row := q.db.QueryRowContext(ctx, getURL, url)
+	var i Url
+	err := row.Scan(
+		&i.ID,
+		&i.Url,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const listURLs = `-- name: ListURLs :many
 SELECT id, url, created_at, updated_at FROM urls
 ORDER BY updated_at DESC

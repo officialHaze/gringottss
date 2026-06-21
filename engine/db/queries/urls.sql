@@ -12,3 +12,7 @@ ORDER BY updated_at DESC;
 -- name: DeleteURL :exec
 DELETE FROM urls
 WHERE url = @url;
+
+-- name: GetURL :one
+SELECT * FROM urls
+WHERE url = @url;
