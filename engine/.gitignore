@@ -16,3 +16,5 @@ settings/*.yml
 !settings/*.example.yml
 
 scripts/
+
+encryption_keys.yml

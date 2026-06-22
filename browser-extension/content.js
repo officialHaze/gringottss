@@ -416,6 +416,13 @@
     // but instantly pull focus straight back to the input field before the webpage can blur.
     dropdown.addEventListener("mousedown", (e) => {
       e.stopPropagation();
+
+      // If the user is clicking the slider or the password text, do NOT steal focus back
+      const target = e.target;
+      if (target.id === "pw-len" || target.id === "pw-preview") {
+        return;
+      }
+
       setTimeout(() => {
         if (input && typeof input.focus === "function") {
           input.focus();
@@ -596,6 +603,53 @@
       preview.classList.add("active");
       useBtn.removeAttribute("disabled");
     }
+
+    lenSlider.addEventListener("input", runEngine);
+    regenBtn.addEventListener("click", runEngine);
+    useBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      applyValueToInput(input, preview.textContent);
+      dropdown.remove();
+    });
+  }
+  function setupGeneratorEngine(dropdown, input) {
+    const preview = dropdown.querySelector("#pw-preview");
+    const lenSlider = dropdown.querySelector("#pw-len");
+    const lenVal = dropdown.querySelector("#pw-len-val");
+    const regenBtn = dropdown.querySelector("#pw-regen");
+    const useBtn = dropdown.querySelector("#pw-use");
+
+    function runEngine(e) {
+      if (e) e.stopPropagation();
+      const len = parseInt(lenSlider.value);
+      lenVal.textContent = len;
+
+      const pool =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+";
+      const arr = new Uint32Array(len);
+      crypto.getRandomValues(arr);
+      const pw = Array.from(arr)
+        .map((v) => pool[v % pool.length])
+        .join("");
+
+      preview.textContent = pw;
+      preview.classList.add("active");
+      useBtn.removeAttribute("disabled");
+    }
+
+    // ─── NEW: Click to Copy Feature ──────────────────────────────────────────
+    preview.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const currentPw = preview.textContent;
+      if (currentPw && currentPw !== "--------") {
+        try {
+          await navigator.clipboard.writeText(currentPw);
+          showToast("Password copied! 📋");
+        } catch (err) {
+          console.error("[Gringottss] Clipboard write failed:", err);
+        }
+      }
+    });
 
     lenSlider.addEventListener("input", runEngine);
     regenBtn.addEventListener("click", runEngine);

@@ -13,4 +13,4 @@ COPY ./db/migrations ./db/migrations
 # Note:- If the defauly port is changed in settings file, same has to be updated here.
 EXPOSE 6230
 
-CMD ["./gringottss", "start_server"]
+CMD ["./gringottss"]

@@ -16,4 +16,11 @@ func RouteControllerMap(api *gin.RouterGroup) {
 	// ======== URLs ======== //
 	v1.GET("/urls", controllers.HandleURLsFetch)    // List all added URLs
 	v1.DELETE("/urls", controllers.HandleURLDelete) // Delete an added URL
+
+	// ======= DB Ops ======== //
+	v1.POST("/db/build", controllers.HandleBuildingDB)               // Build the Gringottss DB
+	v1.POST("/db/migrate/:dbname", controllers.HandleOldDBMigration) // Migrate old Gringottss DB tables to current DB
+
+	// ====== Keys =====
+	v1.POST("/keys/encryption/generate", controllers.HandleEncryptionKeysGen) // Generate encryption keys (paseto supported)
 }

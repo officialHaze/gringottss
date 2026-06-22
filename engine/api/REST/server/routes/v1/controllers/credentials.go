@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -76,30 +75,8 @@ func HandleCredentialAdd(c *gin.Context) {
 		FormInputVal:   payload.FormInputVal,
 	}
 
-	// check if credential is a password, then hash else skip
-	if params.FormInputType == "password" {
-		// encrypt the value
-		now := time.Now()
-
-		jsonToken := paseto.JSONToken{
-			Issuer:   "gringottss_api",
-			Subject:  "pwd_encryption",
-			IssuedAt: now,
-		}
-		jsonToken.Set("pwd", params.FormInputVal)
-		footer := fmt.Sprintf("pwd_encryption_%s", params.ID)
-		encrypted, err := util.PasetoEncrypt(jsonToken, os.Getenv("PWD_ENCRYPTION_KEY"), footer)
-		if err != nil {
-			logger.ERROR().Println(err.Error())
-			c.IndentedJSON(http.StatusInternalServerError, map[string]string{
-				"Error": "Internal server error!",
-			})
-			return
-		}
-
-		// Set the encrypted value as the new form input value
-		params.FormInputVal = encrypted
-	}
+	// encrypt any password input field and set the encrypted value
+	encryptAndSetPassword(&params)
 
 	added, err := sqliteclient.Queries.AddCredential(credentialaddctx, params)
 	if err != nil {
@@ -172,35 +149,15 @@ func HandleCredentialsFetch(c *gin.Context) {
 
 	if noPwdEncryption {
 		// Iterate over the credentials and if password is found
-		// decrypt its value and re-set
+		// decrypt its value and set the decrypted value
 		for i, cred := range credentials {
 			credptr := &cred
 
 			if cred.FormInputType == "password" {
-				// decrypt
-				token, _, err := util.PasetoDecrypt(cred.FormInputVal, os.Getenv("PWD_ENCRYPTION_KEY"))
-				if err != nil {
+				if err := decryptAndSetPassword(credptr, &credentials, i); err != nil {
 					logger.ERROR().Println(err.Error())
-					c.IndentedJSON(http.StatusInternalServerError, map[string]string{
-						"Error": "Internal server error!",
-					})
-					return
+					continue
 				}
-
-				// Set the decrypted value
-				credptr.FormInputVal = token.Get("pwd")
-
-				// Replace the current credential item with the modified one
-				tmp := credentials[i]
-				credentials[i] = credentials[len(credentials)-1]
-				credentials[len(credentials)-1] = tmp
-				credentials = credentials[:len(credentials)-1] // remove the current credential item
-				credentials = append(credentials, *credptr)    // replace the modified credential item
-
-				// Maintain the original position by re-positioning
-				tmp = credentials[i]
-				credentials[i] = credentials[len(credentials)-1]
-				credentials[len(credentials)-1] = tmp
 			}
 		}
 	}
@@ -209,4 +166,65 @@ func HandleCredentialsFetch(c *gin.Context) {
 		"message": "Credentials found.",
 		"data":    credentials,
 	})
+}
+
+// Encrypt plain text password and set the new encrypted value
+func encryptAndSetPassword(params *db.AddCredentialParams) {
+	// check if credential is a password, then encrypt the value else skip
+	if params.FormInputType == "password" {
+		if util.LoadedEncryptionKeys.PWD_ENCRYPTION_KEY == "" {
+			// No encryption key set, skip
+			logger.WARN().Println("No encryption key set. Skipping...")
+			return
+		}
+
+		now := time.Now()
+
+		jsonToken := paseto.JSONToken{
+			Issuer:   "gringottss_engine",
+			Subject:  "pwd_encryption",
+			IssuedAt: now,
+		}
+		jsonToken.Set("pwd", params.FormInputVal)
+		footer := fmt.Sprintf("pwd_encryption_%s", params.ID)
+		encrypted, err := util.PasetoEncrypt(jsonToken, util.LoadedEncryptionKeys.PWD_ENCRYPTION_KEY, footer)
+		if err != nil {
+			logger.ERROR().Printf("Password encryption failed! Storing in plain-text.\n%s", err.Error())
+			return
+		}
+
+		// Set the encrypted value as the new form input value
+		params.FormInputVal = encrypted
+	}
+}
+
+// Decrypt password into plain text and set the decrypted value
+func decryptAndSetPassword(credential *db.Credential, credentials *[]db.Credential, idx int) error {
+	if util.LoadedEncryptionKeys.PWD_ENCRYPTION_KEY == "" {
+		// No encryption key set, skip
+		return nil
+	}
+
+	// decrypt
+	token, _, err := util.PasetoDecrypt(credential.FormInputVal, util.LoadedEncryptionKeys.PWD_ENCRYPTION_KEY)
+	if err != nil {
+		return err
+	}
+
+	// Set the decrypted value
+	credential.FormInputVal = token.Get("pwd")
+
+	// Replace the current credential item with the modified one
+	tmp := (*credentials)[idx]
+	(*credentials)[idx] = (*credentials)[len(*credentials)-1]
+	(*credentials)[len(*credentials)-1] = tmp
+	*credentials = (*credentials)[:len(*credentials)-1] // remove the current credential item
+	*credentials = append(*credentials, *credential)    // replace the modified credential item
+
+	// Maintain the original position by re-positioning
+	tmp = (*credentials)[idx]
+	(*credentials)[idx] = (*credentials)[len(*credentials)-1]
+	(*credentials)[len(*credentials)-1] = tmp
+
+	return nil
 }
