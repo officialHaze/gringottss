@@ -20,6 +20,7 @@ type Client struct {
 	DBName       string
 	MaxOpenConns int8
 	DB           *sql.DB
+	Queries      *db.Queries
 }
 
 func Init(drivername, dbname string, maxopenconns int8) *Client {
@@ -72,5 +73,19 @@ func (c *Client) LoadQueries() error {
 
 	logger.INFO().Println("Setting queries for global use.")
 	Queries = db.New(c.DB)
+	return nil
+}
+
+// Load client specific queries
+func (c *Client) LoadClientQueries() error {
+	logger.INFO().Println("Loading client queries...")
+	if c.DB == nil {
+		return fmt.Errorf("No DB found to load client queries!")
+	}
+
+	logger.SUCCESS().Println("Client queries loaded successfully!")
+
+	logger.INFO().Println("Setting client queries.")
+	c.Queries = db.New(c.DB)
 	return nil
 }

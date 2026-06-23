@@ -6,7 +6,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: gringottss-api
+    container_name: gringottss-api-${VERSION}
     ports:
       - 6230:6230 # Should be updated if default port is changed in settings file
     volumes:
@@ -14,6 +14,7 @@ services:
       - ./settings/settings.conf.yaml:/gringottss/settings/settings.conf.yaml:ro
       - logs:/var/log
       - ./data/gringottss.db:/gringottss/data/gringottss.db
+      - ./encryption_keys.yml:/gringottss/encryption_keys.yml
     networks:
       - gringottss-network
     restart: unless-stopped

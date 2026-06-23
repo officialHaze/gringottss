@@ -164,41 +164,83 @@ All vault data is stored in:
 
 This SQLite database contains your credentials, settings, and other vault-related data.
 
-### Upgrading to a New Release
-
-To continue using your existing vault in a newer Gringottss release:
-
-1. Stop the currently running server.
-2. Copy `gringottss.db` into the new release's `./data/` directory.
-3. Start the new version.
-
-No export or import process is required.
-
 ---
 
-### Migrating Data from Another Machine
+## Upgrading Between Releases
 
-Gringottss also supports migrating data from an existing database on another machine.
+Gringottss is designed with long-term portability in mind.
 
-1. Copy the database that you wish to migrate into the `./migrate/` directory located in the project root.
+Your vault is not tied to a specific release, installation, operating system, or machine. By carrying forward your encryption keys and database, you can continue using your vault across future Gringottss releases without losing access to your stored credentials.
 
-2. Run:
+### Encryption Keys
 
-```bash
-go run gringottss.go migrate <OLD_DB_NAME>
+Password encryption in Gringottss is driven by user-generated encryption keys.
+
+For new installations, encryption keys should be generated using the **Gringottss CLI**.
+
+Detailed instructions are available in the [CLI documentation](./cli/README.md).
+
+Once generated, the resulting:
+
+```text
+encryption_keys.yml
 ```
 
-Example:
+file can be reused across future releases.
 
-```bash
-go run gringottss.go migrate old-gringottss.db
+To preserve access to previously encrypted passwords:
+
+1. Copy `encryption_keys.yml` from the existing installation.
+2. Place it in the root directory of the new Gringottss Engine installation.
+3. Start the Engine normally.
+
+As long as the same encryption keys are preserved, previously stored passwords remain accessible.
+
+### Vault Database
+
+Credential data is stored in the Gringottss SQLite database.
+
+The Gringottss CLI provides tooling for carrying vault data between releases and systems.
+
+Detailed instructions are available in [CLI Documentation](./cli/README.md).
+
+To migrate existing data:
+
+1. Move the old database inside `<PROJECT_ROOT>/engine/migrate`.
+2. Use [Gringottss CLI](./cli/README.md) to run the migration.
+3. (Optional) Restart Gringottss Engine.
+
+### What Should Be Preserved?
+
+For a seamless upgrade experience, preserve:
+
+```text
+encryption_keys.yml
 ```
 
-3. Wait for the migration process to complete.
+and
 
-Once finished, all supported credentials and vault data will be migrated into the current Gringottss database while preserving your existing records.
+```text
+gringottss.db
+```
 
-No manual exports, imports, or data conversion steps are required.
+These two files together represent your vault.
+
+- `gringottss.db` contains your stored credential data.
+- `encryption_keys.yml` contains the keys required to decrypt protected password values.
+
+Losing either may result in partial or complete loss of access to encrypted data.
+
+### Recommended Upgrade Process
+
+1. Stop the currently running Gringottss Engine.
+2. Back up `gringottss.db`.
+3. Back up `encryption_keys.yml`.
+4. Install the new Gringottss release.
+5. Copy both files into the new installation.
+6. Start the new release.
+
+Your vault should be immediately available with no additional configuration required.
 
 ---
 

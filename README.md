@@ -42,21 +42,46 @@ Just your vault, your machine, and your keys.
 
 ## Architecture
 
-Gringottss consists of two primary components:
+Gringottss consists of three primary components:
 
-### API Server
+### Gringottss Engine
 
-The API server is responsible for:
+The Gringottss Engine is the core service of the platform.
+
+It is responsible for:
 
 - Managing stored credentials
 - Handling encryption and decryption operations
 - Processing credential lookup requests
 - Generating and storing credential data
-- Providing a local API interface for extensions
+- Managing vault persistence
+- Providing a local API interface for clients
+
+The Engine serves as the bridge between the vault database and all Gringottss clients.
+
+---
+
+### Gringottss CLI
+
+The Gringottss CLI provides a command-line interface for interacting with the Gringottss Engine.
+
+It can be used to perform various vault-related operations directly from the terminal without requiring a browser.
+
+Examples include:
+
+- Managing credentials
+- Querying stored entries
+- Administrative operations
+- Automation and scripting workflows
+- Other Engine-supported actions
+
+The CLI communicates directly with the locally running Gringottss Engine.
+
+---
 
 ### Browser Extension
 
-The browser extension provides the user-facing experience and communicates directly with the locally running API server.
+The browser extension provides the browser-integrated user experience and communicates directly with the locally running Gringottss Engine.
 
 Its responsibilities include:
 
@@ -100,13 +125,14 @@ The decrypted value is never stored back to the database.
 
 ---
 
-## How It Works
+## How It Works? (First time usage)
 
-1. Download the latest release.
-2. Start the Gringottss API Server. [API Server README](./api-server/README.md)
-3. Install the Gringottss Browser Extension. [Browser Extension README](./browser-extension/README.md)
-4. Configure the extension to communicate with the locally running API server as described in the extension documentation. [Browser Extension README](./browser-extension/README.md)
-5. Browse normally.
+1. Download the latest Gringottss release.
+2. Start the Gringottss Engine. [Engine README](./engine/README.md)
+3. Install and configure the Gringottss Browser Extension. [Browser Extension README](./browser-extension/README.md)
+4. Use the Gringottss CLI to generate `encryption_keys.yml`. This will be used by the gringottss engine to encrypt/decrypt sensitive data. [CLI README](./cli/README.md)
+5. Restart gringottss engine.
+6. Browse normally or interact with the vault through the CLI.
 
 Whenever a supported webpage contains credential input fields, Gringottss injects its widget directly into the form.
 
@@ -119,6 +145,8 @@ The widget allows users to:
 - Save generated passwords
 - Generate and instantly autofill passwords
 - Manage credential interactions without leaving the current page
+
+Alternatively, users may interact with the vault directly through the Gringottss CLI for scripting, automation, and terminal-based workflows.
 
 ### Browser Support
 
@@ -169,6 +197,24 @@ Because the database resides entirely on your machine:
 - No third-party services are required for storage or synchronization.
 
 Gringottss keeps persistence simple: one application, one database, complete ownership.
+
+---
+
+## Upgrading Between Releases
+
+Gringottss is designed to preserve vault data across releases.
+
+To migrate an existing vault to a newer release:
+
+- Carry forward your database (`gringottss.db`)
+- Carry forward your encryption keys (`encryption_keys.yml`)
+
+These files together form your vault and allow future releases to access previously stored credentials.
+
+Detailed migration and key management instructions can be found in the:
+
+- [Gringottss Engine README](./engine/README.md)
+- [Gringottss CLI README](./cli/README.md)
 
 ---
 
